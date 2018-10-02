@@ -1,5 +1,5 @@
 {
-  "name": "yb-component-proto",
+  "name": "rs-component-proto",
   "version": "0.0.0",
   "main": "index.js",
   "author": "okuoku <mjt@cltn.org>",

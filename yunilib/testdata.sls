@@ -1,18 +1,37 @@
 (library (testdata)
          (export gen-testdata/left)
-         (import (yuni scheme))
-
+         (import (yuni scheme)
+                 (datafetch testing))
          
-(define (gen-one idx)
-  (js-obj "ident" (string-append "i" (number->string idx))
-          "author" "TestPerson"
-          "message" (string-append 
-                      (number->string idx)
-                      ": " "Testteststest\n\ntesttesttesttesttest\n")))
+(define (gen-one ref)
+  (let* ((x (testdata-ref ref))
+         (ident (js-ref x "ident"))
+         (author (js-ref x "author"))
+         (message (js-ref x "message")))
+    (js-obj "ident" (substring ident 0 10)
+            "author" author
+            "message" message)))
+
+(define (gen-spine)
+  (ensure-testdata!)
+  ;; Generate spine
+  (let loop ((next (testdata-head))
+             (cur '()))
+    (let ((nn (testdata-refnext next)))
+     (if nn
+       (loop nn (cons next cur))
+       (reverse cur)
+       ))))
 
 (define (gen-testdata/left)
-  (reverse 
-    (map (lambda (idx) (gen-one idx))
-         (iota 100 1234 3))))
+  (let ((l (gen-spine)))
+   (PCK (list 'LOGLENGTH: (length l)))
+   (map gen-one l)))
+
+(define testdata-available #f)
+(define (ensure-testdata!)
+  (unless testdata-available
+    (prepare-testdata)
+    (set! testdata-available #t)))
          
 )

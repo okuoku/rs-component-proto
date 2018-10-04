@@ -5,7 +5,7 @@
   "author": "okuoku <mjt@cltn.org>",
   "license": "CC0-1.0",
   "scripts": {
-      "start": "yuniappjs-devserve"
+    "start": "yuniappjs-devserve"
   },
   "dependencies": {
     "@yuniscm/yuniappjs-pkg": "*"

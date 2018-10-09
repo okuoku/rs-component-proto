@@ -1,5 +1,7 @@
 (library (testdata)
-         (export gen-testdata/left)
+         (export gen-testdata/left
+                 gen-testdata/right
+                 )
          (import (yuni scheme)
                  (datafetch testing))
          
@@ -12,10 +14,9 @@
             "author" author
             "message" message)))
 
-(define (gen-spine)
-  (ensure-testdata!)
+(define (gen-spine start)
   ;; Generate spine
-  (let loop ((next (testdata-head))
+  (let loop ((next start)
              (cur '()))
     (let ((nn (testdata-refnext next)))
      (if nn
@@ -23,8 +24,15 @@
        (reverse cur)))))
 
 (define (gen-testdata/left)
-  (let ((l (gen-spine)))
-   (PCK (list 'LOGLENGTH: (length l)))
+  (ensure-testdata!)
+  (let ((l (gen-spine (testdata-head))))
+   (PCK (list 'LOGLENGTH-LEFT: (length l)))
+   (map gen-one l)))
+
+(define (gen-testdata/right)
+  (ensure-testdata!)
+  (let ((l (gen-spine (testdata-subhead))))
+   (PCK (list 'LOGLENGTH-RIGHT: (length l)))
    (map gen-one l)))
 
 (define testdata-available #f)

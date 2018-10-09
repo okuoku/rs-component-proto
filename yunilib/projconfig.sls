@@ -11,7 +11,7 @@
 
 ; Target branches
 (define projmainhead "refs/heads/master")
-(define projsubhead "ref/tags/0.8")
+(define projsubhead "refs/tags/0.8")
 (define projheads*
   (cons projmainhead 
         (cons projsubhead

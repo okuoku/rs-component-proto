@@ -10,10 +10,16 @@
 ;;
 
 (define %tlcard/logdata
-  (make-react-class
-    "render" (wrap-this this
-                        (ReactPre #f (js-ref (js-ref this "props")
-                                               "value")))))
+  (make-react-element
+    ((withStyles
+       (js-obj "logcontent" (js-obj "whiteSpace" "pre-wrap")))
+     (make-react-class/raw
+       "render" (wrap-this this
+                           (let* ((props (js-ref this "props"))
+                                  (classes (js-ref props "classes")))
+                            (ReactPre (js-obj "className" (js-ref classes
+                                                                  "logcontent"))
+                                      (js-ref props "value"))))))))
 
 (define tlcard/large
   (make-react-element

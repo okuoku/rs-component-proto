@@ -1,15 +1,16 @@
 (library (components mainframe)
          (export mainframe)
          (import (yuni scheme)
-                 (components tlcards)
                  (components cmdbar)
+                 (components tlstream)
                  (testdata)
                  (proto reactutil)
                  (proto jsutil))
 
 ;;
 
-(define dat (gen-testdata/left))
+(define dat0 (js-obj "entries" (list->js-array (gen-testdata/left))))
+(define dat1 (js-obj "entries" (list->js-array (gen-testdata/right))))
 
 (define mainframe
   (make-react-element
@@ -19,7 +20,10 @@
                                     "display" "flex"
                                     "flexDirection" "column")
                    "upper" (js-obj "height" "36px")
-                   "lower" (js-obj "overflow" "scroll")))
+                   "lower" (js-obj "overflow" "hidden"
+                                   "display" "flex"
+                                   "flexDirection" "row")
+                   "hpad" (js-obj "width" "32px")))
      (make-react-class/raw
        "render" (wrap-this this
                            (let* ((props (js-ref this "props"))
@@ -31,10 +35,10 @@
                                          (cmdbar))
                                (ReactDiv (js-obj "className" 
                                                  (js-ref classes "lower"))
-                                         (apply ReactDiv
-                                                #f
-                                                (map (lambda (prop) 
-                                                       (tlcard/large prop))
-                                                     dat))))))))))
+                                         (tlstream dat0)
+                                         (ReactDiv 
+                                           (js-obj "className"
+                                                   (js-ref classes "hpad")))
+                                         (tlstream dat1)))))))))
          
 )

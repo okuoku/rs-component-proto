@@ -1,6 +1,7 @@
 (library (datafetch testing)
          (export prepare-testdata
                  testdata-head
+                 testdata-subhead
                  testdata-ref
                  testdata-refnext
                  )
@@ -13,6 +14,7 @@
 (define MASTERREF* '())
 (define MASTERBRANCHES (js-obj))
 (define MASTERREF-MAIN #f)
+(define MASTERREF-SUB #f)
 (define REFCOUNT 0)
 (define REPOSITORY-REFS (js-obj))
 (define REPOSITORY-LINKS (js-obj))
@@ -22,6 +24,7 @@
    (if (js-undefined? r) x r)))
 
 (define (testdata-head) (%refnamefilt MASTERREF-MAIN))
+(define (testdata-subhead) (%refnamefilt MASTERREF-SUB))
 (define (testdata-ref x) (ref-read x))
 (define (testdata-refnext x) 
   (let ((r (js-ref REPOSITORY-LINKS x)))
@@ -47,6 +50,9 @@
                      (PCK (list 'ADD: name ref))
                      (js-set! MASTERBRANCHES name ref)
                      (set! MASTERREF* (cons ref MASTERREF*)))
+                   ;; FIXME: Remove them as we now have %refnamefilt
+                   (when (PROJSUBHEAD? name)
+                     (set! MASTERREF-SUB name))
                    (when (PROJMAINHEAD? name)
                      (set! MASTERREF-MAIN name)))) 
                l))))

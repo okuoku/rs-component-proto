@@ -9,15 +9,19 @@
 
 ;; Project Config
 
-; <List> of target branches
+; Target branches
 (define projmainhead "refs/heads/master")
+(define projsubhead "ref/tags/0.8")
 (define projheads*
   (cons projmainhead 
-        '("refs/tags/0.8")))
+        (cons projsubhead
+              ;; FIXME: More heads here
+              '())))
 
 ; Library
 (define (PROJHEAD? x) 
   (member x projheads*))
 (define (PROJMAINHEAD? x) (equal? x projmainhead))
+(define (PROJSUBHEAD? x) (equal? x projsubhead))
          
 )

@@ -5,25 +5,30 @@
                  testdata-refnext
                  )
          (import (yuni scheme)
+                 (projconfig)
                  (datafetch fetcher))
 
 ;;
 
-(define BASEURL "http://localhost:9999")
-
-(define MASTERREF #f)
+(define MASTERREF* '())
+(define MASTERBRANCHES (js-obj))
+(define MASTERREF-MAIN #f)
 (define REFCOUNT 0)
 (define REPOSITORY-REFS (js-obj))
 (define REPOSITORY-LINKS (js-obj))
 
-(define (testdata-head) MASTERREF)
+(define (%refnamefilt x)
+  (let ((r (js-ref MASTERBRANCHES x)))
+   (if (js-undefined? r) x r)))
+
+(define (testdata-head) (%refnamefilt MASTERREF-MAIN))
 (define (testdata-ref x) (ref-read x))
 (define (testdata-refnext x) 
   (let ((r (js-ref REPOSITORY-LINKS x)))
    (if (js-undefined? r) #f r)))
 
 (define (REQ-history ref)
-  (let* ((r (do-fetch (string-append BASEURL "/mainhistory")
+  (let* ((r (do-fetch (string-append (BASEURL) "/mainhistory")
                       (list (cons 'from ref)
                             (cons 'count 100))))
          (res (js-ref r "result")))
@@ -31,15 +36,19 @@
      l)))
 
 (define (CALC-heads)
-  (let* ((r (do-fetch (string-append BASEURL "/heads")))
+  (let* ((r (do-fetch (string-append (BASEURL) "/heads")))
          (res (js-ref r "result")))
     (let ((l (js-array->list res)))
      (for-each (lambda (e)
                  (let ((name (js-ref e "name"))
                        (ref (js-ref e "ref")))
                    (PCK (list 'NAME: name 'REF: ref))
-                   (when (string=? name "refs/heads/master")
-                     (set! MASTERREF ref))))
+                   (when (PROJHEAD? name)
+                     (PCK (list 'ADD: name ref))
+                     (js-set! MASTERBRANCHES name ref)
+                     (set! MASTERREF* (cons ref MASTERREF*)))
+                   (when (PROJMAINHEAD? name)
+                     (set! MASTERREF-MAIN name)))) 
                l))))
 
 (define (ref-register! refname obj)
@@ -99,9 +108,7 @@
 
 (define (prepare-testdata)
   (CALC-heads)
-  (when MASTERREF
-    (fill-refs/recursive! MASTERREF)))
-
-
+  (PCK MASTERREF*)
+  (for-each fill-refs/recursive! MASTERREF*))
 
 )

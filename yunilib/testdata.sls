@@ -20,8 +20,7 @@
     (let ((nn (testdata-refnext next)))
      (if nn
        (loop nn (cons next cur))
-       (reverse cur)
-       ))))
+       (reverse cur)))))
 
 (define (gen-testdata/left)
   (let ((l (gen-spine)))

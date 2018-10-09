@@ -11,7 +11,6 @@
    (PCK (list 'SIMPLEFETCH: r))
    (vector-ref r 0)))
 
-
 (define (do-fetch url . query?) ;; => js-obj / number(status code) / #f(fatal)
   (define has-query? #f)
   (define (strfy x)

@@ -1,6 +1,7 @@
 (library (components tlstream)
          (export tlstream)
          (import (yuni scheme)
+                 (proto react-mui)
                  (proto reactutil)
                  (proto jsutil)
                  (components tlcards))
@@ -11,7 +12,9 @@
        (js-obj "tlstream" (js-obj "maxHeight" "100%"
                                   "overflow" "scroll"
                                   "flexDirection" "column"
-                                  "width" "350px")))
+                                  "width" "700px"))
+       (js-obj "streamlist" (js-obj "disablePadding" "true"
+                                    "dense" "true")))
      (make-react-class/raw
        "render"
        (wrap-this 
@@ -21,8 +24,8 @@
            (let ((entries* (vector->list (js-ref props "entries"))))
             (ReactDiv
               (js-obj "className" (js-ref classes "tlstream"))
-              (apply ReactDiv
-                     #f
+              (apply MuiList
+                     (js-obj "className" (js-ref classes "streamlist"))
                      (map (lambda (prop)
                             (tlcard/large prop))
                           entries*))))))))))

@@ -14,12 +14,18 @@
            CardHeader
            CardMedia
            Collapse
+           ListItem
+           ListItemSecondaryAction
+           ListItemText
+           ListSubheader
+           MuiList ;; List
            Paper
            withStyles
            ;; Base react-dom components
            ReactDiv
            ReactPre
            ReactFragment
+           ReactSpan
            )
          (import (yuni scheme)
                  (proto jsutil)
@@ -48,11 +54,17 @@
 (define CardMedia (%MUI "CardMedia"))
 (define Paper (%MUI "Paper"))
 (define Collapse (%MUI "Collapse"))
+(define MuiList (%MUI "List"))
+(define ListItem (%MUI "ListItem"))
+(define ListItemSecondaryAction (%MUI "ListItemSecondaryAction"))
+(define ListItemText (%MUI "ListItemText"))
+(define ListSubheader (%MUI "ListSubheader"))
 
 ;; Should be at react-dom
 (define ReactFragment (make-react-element (yuni/js-import "ReactFragment")))
 (define ReactDiv (make-react-element "div"))
 (define ReactPre (make-react-element "pre"))
+(define ReactSpan (make-react-element "span"))
 
 (define %withStyles/MUI
   (js-ref %material-ui/react-mui "withStyles"))

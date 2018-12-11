@@ -1,5 +1,6 @@
 (library (components tlcards)
          (export
+           tlmorebutton/action
            tlcard/large)
          (import (yuni scheme)
                  (proto react-mui)
@@ -28,6 +29,20 @@
   (Checkbox 
     (js-obj "onChange" (js-closure (lambda (event checked) (act checked)))
             "checked" initial)))
+
+(define (tlmorebutton/action act)
+  ((make-react-element
+     ((withStyles (js-obj "buttontext" (js-obj "font-size" "150%")))
+      (make-react-class/raw
+        "render"
+        (wrap-this
+          this
+          (let ((classes (js-ref (js-ref this "props") "classes")))
+           (Button (js-obj "variant" "contained"
+                           "className" "buttontext"
+                           "onClick" (js-closure (lambda (e c) (act))))
+                   
+                   "More"))))))))
 
 (define tlcard/revid
   (make-react-element

@@ -57,6 +57,14 @@
                                     "dense" "true")))
      (make-react-class/raw
        "getInitialState" (wrap-this this (js-obj "theState" #f))
+       "componentDidMount"
+       (wrap-this
+         this
+         (let ()
+          (define (init-cb entries*)
+            (js-invoke this "setState" 
+                       (js-obj "theState" entries*)))
+          (cmd '(init) init-cb)))
        "render"
        (wrap-this 
          this
@@ -68,13 +76,8 @@
              (js-invoke this "setState" 
                         (js-obj "theState" entries*)))
 
-           (define (update-cb added-entries*)
-             (PCK 'Update))
-
            (cond
-             ((not (and state init-sent?))
-              (set! init-sent? #t)
-              (cmd '(init) init-cb)
+             ((not state)
               "Init...")
              (else
                (let ((entries* state))
@@ -90,7 +93,7 @@
                                    (tlmorebutton/action 
                                      (lambda () 
                                        (PCK 'ONL)
-                                       (cmd obj update-cb))))
+                                       (cmd obj init-cb))))
                                   (else "Something wrong")))
                               entries*))))))))))))
 )

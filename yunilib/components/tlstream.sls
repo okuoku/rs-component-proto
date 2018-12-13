@@ -26,6 +26,7 @@
 ;;  (action "ident" ACTION)
 ;;    ACTION = #t (main action) / "action idents"
 ;;  (link "ident" "revname parameters")
+;;  (datetag YYYY MM DD)
 ;;
          
 (define (rev->prop rev)
@@ -43,6 +44,29 @@
                   ((date) (js-set! r "date" (cdr p)))) )
               (cddr rev))
     r))
+
+(define (revdate x)
+  (let ((r (assq 'datetag x)))
+   (and r (cdr r))))
+
+(define (filter-datetag rev*)
+  (define curdate #f)
+  (let loop ((cur '())
+             (q rev*))
+    (if (null? q)
+      (reverse cur)
+      (let ((a (car q))
+            (d (cdr q)))
+        (if (eq? 'rev (car a))
+          (let ((date (revdate (cddr a))))
+           (PCK 'REVDATE a '=> date)
+           (cond
+             ((and curdate (equal? curdate date))
+              (loop (cons a cur) d))
+             (else
+               (set! curdate date)
+               (loop (cons a (cons (cons 'datetag date) cur)) d))))
+          (loop (cons a cur) d))))))
 
 
 (define (make-tlstream cmd)
@@ -80,7 +104,7 @@
              ((not state)
               "Init...")
              (else
-               (let ((entries* state))
+               (let ((entries* (filter-datetag state)))
                 (ReactDiv
                   (js-obj "className" (js-ref classes "tlstream"))
                   (apply MuiList
@@ -94,6 +118,14 @@
                                      (lambda () 
                                        (PCK 'ONL)
                                        (cmd obj init-cb))))
+                                  ((datetag)
+                                   (ListSubheader
+                                     (js-obj "inset" #t
+                                             "disableGutters" #t)
+                                     (let ((Y (number->string (cadr obj)))
+                                           (M (number->string (caddr obj)))
+                                           (D (number->string (cadddr obj))))
+                                       (string-append Y "/" M "/" D))))
                                   (else "Something wrong")))
                               entries*))))))))))))
 )
